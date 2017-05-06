@@ -7,25 +7,63 @@ const Discord = require('discord.js');
 const fs = require('fs');
 const ytdl = require('ytdl-core');
 
-const client = new Discord.Client();
+const bot = new Discord.Client();
 const token = fs.readFileSync("private/token.txt", "utf8");
 
-client.on('ready', function() {
+const cmdPrefix = "!";
+const commands = {
+	"play": {
+		usage: "!play <youtube_url> [voice_channel]",
+		description: "Plays youtube links for a voice channel; if no voice channel is specified, it will default to the 'general' channel",
+		process: function(bot,args){
+			var videoLink = args[0];
+			var options = args.slice(1,args.length);
+		}
+	}
+};
+
+bot.on('ready', function() {
     console.log("Youtube Audio Bot Activated!")
 });
 
-client.on('guildMemberAdd', function(member) {
+bot.on('guildMemberAdd', function(member) {
     member.guild.defaultChannel.send('HEY YOU! ${member}! WELCOME!');
 });
 
-client.on('message', function(message) {
-    if(message === 'hi');
-        message.channel.send('Howdy Cowboy!');
+bot.on('message', function( message ) {
+    if( (acceptableMessages.indexOf( message.content ) > -1 ) && !message.author.bot ) {
+        message.channel.send( 'Suhhh' );
+	}
+} );
 
-    if (message.content === 'what is my avatar?') {
-        // Send the user's avatar URL
-        message.reply(message.author.avatarURL);
-    }
-});
+function isBotMessage(message) {
+	return message.author.bot;
+}
+
+function isCommandMessage(message) {
+	return message.content.startsWith(cmdPrefix);
+}
+
+function parseText(text) {
+	if(isBotMessage(text)) return;
+
+	if(isCommandMessage(text)) {
+		parseBotCommand(text);
+	} else {
+		parseMessage(text);
+	}
+}
+
+function parseBotCommand(command) {
+	var tokens = command.split(" ");
+	var cmd = tokens[0].substring(cmdPrefix.length);
+	var args = tokens.slice(1,tokens.length);
+
+
+}
+
+function parseMessage(message) {
+	
+}
 
 client.login(token);
