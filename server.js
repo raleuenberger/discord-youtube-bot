@@ -41,6 +41,15 @@ const commands = {
 				broadcast.end();
 			})
 		}
+	},
+	"leave": {
+		usage: "!leave",
+		description: "Leaves current voice channel.",
+		process: function(bot,msg,args){
+			bot.voiceConnections.forEach(function(connection){
+				connection.disconnect();
+			})
+		}
 	}
 };
 
