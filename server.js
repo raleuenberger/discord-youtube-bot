@@ -24,6 +24,20 @@ const commands = {
 
 bot.on('ready', function() {
     console.log("Youtube Audio Bot Activated!")
+    //console.log(client.createVoiceBroadcast);
+
+    const streamOptions = { seek: 0, volume: 1 };
+    const broadcast = client.createVoiceBroadcast();
+
+    var channel = client.channels.find('name', 'General');
+
+    channel.join()
+     .then(function(connection) {
+         const stream = ytdl('https://www.youtube.com/watch?v=SW-BU6keEUw', { filter: 'audioonly'});
+         broadcast.playStream(stream);
+         const dispatcher = connection.playBroadcast(broadcast);
+     })
+     .catch(console.error);
 });
 
 bot.on('guildMemberAdd', function(member) {
@@ -66,4 +80,6 @@ function parseMessage(message) {
 	
 }
 
+
 client.login(token);
+
