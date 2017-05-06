@@ -19,7 +19,13 @@ client.on('guildMemberAdd', function(member) {
 });
 
 client.on('message', function(message) {
-    message.channel.send('BLOOP!');
+    if(message === 'hi');
+        message.channel.send('Howdy Cowboy!');
+
+    if (message.content === 'what is my avatar?') {
+        // Send the user's avatar URL
+        message.reply(message.author.avatarURL);
+    }
 });
 
 client.login(token);
