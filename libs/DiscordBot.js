@@ -58,8 +58,60 @@ class DiscordBot {
 
     BroadcastYoutubeAudio(author, channel, url){
         var voiceChannel = this.DetermineUsersVoiceChannel(author, channel);
-        this.Broadcaster.Play(this, voiceChannel, url);
+        this.Broadcaster.Play(this, voiceChannel, channel, url);
     }
+	
+	StopBroadcast(){
+		this.Client.broadcasts.forEach(function(broadcast){
+			broadcast.end();
+		});
+	}
+	
+	LeaveVoiceChannel(){
+		this.Client.voiceConnections.forEach(function(connection){
+			connection.disconnect();
+		});
+	}
+	
+	HandlePlaylistCommand(command){
+		//playlist <playlist_name> [action: add, play, songs, remove] [option 1: url, id, loop, shuffle]
+		var playlistName = command.Params[0];
+		var action = command.Params[1];
+		var optionA = command.Params[2];
+		var optionB = command.Params[3];
+		
+		/*
+			Handle determining appropriate Broadcaster func to call,
+			and determine and extract the parameters to pass the func
+		*/
+	}
+	
+	ListAllPlaylists(channel){
+		var playlistString = "Hi, here are all the existing playlists: \n \n";
+		
+		Object.entries(this.Broadcaster.Playlists).forEach(function([key, value]){
+			playlistString += "Name: " + value.name + "\n" + 
+				"Creators: ";
+			
+			value.creators.forEach(function(creator, index){
+				playlistString += creator;
+				if(index != value.creators.length - 1){
+					playlistString += ", ";
+				}
+			});
+			
+			playlistString += "\n" +
+				"Tracks: \n";
+				
+			value.tracks.forEach(function(track){
+				playlistString += "    " + track + "\n";
+			});
+			
+			playlistString += " \n \n";
+		});
+		
+		channel.send(playlistString).then((message => message.delete(30000)));
+	}
 
     ListAllCommands(channel){
         var helpString = "Hello, here are the commands I can perform: \n \n";
