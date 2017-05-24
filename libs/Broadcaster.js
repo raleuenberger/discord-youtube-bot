@@ -38,12 +38,14 @@ class Broadcaster {
     }
 
 	JoinChannel(channel){
-		var self = this;
-		channel.join()
-			.then(function(connection){
-				self.Connection = connection;
-			})
-			.catch(console.error);
+	    var self = this;
+        return new Promise((resolve) => {
+            channel.join()
+                .then(function(connection) {
+                    self.Connection = connection;
+                    resolve();
+                });
+        });
 	}
 	
 	/*
@@ -55,13 +57,17 @@ class Broadcaster {
 		this.Broadcast = bot.Client.createVoiceBroadcast();
 		this.VoiceChannel = voiceChannel;
 		this.TextChannel = textChannel;
-		
-		JoinChannel(this.VoiceChannel)
-			.then(PlaySong(url))
-			.catch(console.error);
+
+        var self = this;
+		this.JoinChannel(this.VoiceChannel)
+            .then(function() {
+                self.PlaySong(url);
+            })
+            .catch(console.error);
     }
 	
 	PlaySong(url){
+	    console.log("now i'm here: " + url);
 		this.Stream = ytdl(url, { filter: 'audioonly'});
 		this.Broadcast.playStream(this.Stream);
 		const dispatcher = this.Connection.playBroadcast(this.Broadcast);
